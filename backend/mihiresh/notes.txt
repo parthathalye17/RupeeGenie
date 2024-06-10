@@ -1,0 +1,36 @@
+/fetch_transaction_data
+/fetch_account_data
+
+/chat_text
+/chat_audio
+
+/upi_transaction
+/account_transaction
+/card_transaction
+
+/transaction_validation (not sure whether function or route)
+/fraud_transaction
+
+/ocr_doc_submission
+/ocr_user_text_query
+/ocr_user_voice_query
+
+/fetch_investment_data
+/investment_allocation
+
+/helpline_text
+
+/reply_user
+
+/block_card_request
+/block_card_response
+
+/fraud_transaction_report
+/fraud_transaction_response
+
+/fetch_notifications
+
+/add_card
+/add_new_account (types like savings, current, etc.)
+
+/account_user_qr
