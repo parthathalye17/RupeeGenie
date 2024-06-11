@@ -38,6 +38,9 @@ async def sign_up_new_user(
 
         print(f"Response: {auth_response}")
 
+        if not isinstance(auth_response, dict):
+            auth_response = auth_response.json()
+            
         # if auth_response.status_code != 200:
         #     raise HTTPException(status_code=auth_response.status_code, detail=auth_response.json())
         
@@ -49,7 +52,7 @@ async def sign_up_new_user(
             "phone": phone,
             "account_number": account_number
         }
-
+        print(data)
         db_response = supabase.table('users').insert(data).execute()
 
         if db_response.status_code != 200:
