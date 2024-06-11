@@ -4,18 +4,18 @@ import { React, useState, useEffect } from 'react';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 
-import Soham from "./components/SohamTutorial";
+import Home from "./pages/homePage";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={'Soham'}>
+      <Stack.Navigator initialRouteName={'home'}>
 
         <Stack.Screen
-          name="Soham"
-          component={Soham}
+          name="home"
+          component={Home}
           options={{ headerShown: false }}
         />
         
