@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from supabase import create_client, Client
 import json
-
+from bhashini import text_to_speech, transcribe, translation
+from chat_bot import chatbot_response
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_API_KEY")
@@ -80,27 +81,27 @@ async def sign_up_new_user(
 
 
 
-# @app.post("/chat_text")
-# async def chat_text(
-#     text_input: str = Form(...),
-#     language: str = Form(...),
-#     user_id: str = Form(...)
-# ):
-#     try:
-#         text = text_input
-#         english_text = await translation(language, "English", text)
-#         eng_text = english_text['tranlated_content']
-#         answer = await chatbot_response(eng_text, user_id)
-#         answer_json = await translation("English", language, answer)
-#         output = answer_json['translated_content']
-#         if output:
-#             print(f"The answer: {output}")
-#             return JSONResponse(content={"message": "Got the answer", "output": output, "success": True}, status_code=200)
-#         print(f"Output Content empty: {output}")
-#         return JSONResponse(content={"message": "The output is empty", "success": False}, status_code=500)
-#     except Exception as e:
-#         print(f"The error in chat_text is: {e}")
-#         return JSONResponse(content={"message": "Error Fetching Answer", "success": False}, status_code=500)
+@app.post("/chat_text")
+async def chat_text(
+    text_input: str = Form(...),
+    language: str = Form(...),
+    user_id: str = Form(...)
+):
+    try:
+        text = text_input
+        english_text = await translation(language, "English", text)
+        eng_text = english_text['tranlated_content']
+        answer = await chatbot_response(eng_text, user_id)
+        answer_json = await translation("English", language, answer)
+        output = answer_json['translated_content']
+        if output:
+            print(f"The answer: {output}")
+            return JSONResponse(content={"message": "Got the answer", "output": output, "success": True}, status_code=200)
+        print(f"Output Content empty: {output}")
+        return JSONResponse(content={"message": "The output is empty", "success": False}, status_code=500)
+    except Exception as e:
+        print(f"The error in chat_text is: {e}")
+        return JSONResponse(content={"message": "Error Fetching Answer", "success": False}, status_code=500)
     
 
 
