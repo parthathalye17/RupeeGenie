@@ -25,67 +25,62 @@ async def extract_text(pdf_path):
         print(extracted_text)
         return extracted_text
     except Exception as e:
-        print(f"The exception has occured at: {e}")
+        print(f"The exception has occurred at: {e}")
         return e
 
-async def chunking(text):
-    text_splitter = RecursiveCharacterTextSplitter (chunk_size = 1000,    #for next time let's try to keep the chunk size little bigger
-                                                    chunk_overlap = 100,
-                                                    length_function = len,
-        add_start_index = True
+def chunking(data):
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=5000,
+        chunk_overlap=100,
+        length_function=len,
+        add_start_index=True
     )
-    texts = text_splitter.create_documents([text])
-    docs = []
-    for chunk in texts:
-        docs.append(chunk.page_content)
-    print(docs[:2])
+    texts = text_splitter.create_documents([data])
+    docs = [content.page_content for content in texts]  # Extracting only the page content
     return docs
-    
-gemini_key = os.getenv("GEMINI_KEY")
+
+gemini_key = "AIzaSyD5detVlrgZRiQALy7k_L1_QGBHniUIXnc"
 
 genai.configure(api_key=gemini_key)
-    
-class GeminiEmbeddingFunction(EmbeddingFunction):
+
+sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+
+class MyEmbeddingFunction(EmbeddingFunction):
     def __call__(self, input: Documents) -> Embeddings:
-        model = "models/text-embedding-004"
-        title = 'API'
-        return genai.embed_content(
-            model=model,
-            content=input,
-            title=title)["embedding"]
-    
+        embeddings = sentence_transformer_ef(input)
+        return embeddings
 
-async def create_chroma_db(docs,name):
-    try:
-        chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database") 
-        print(f"\n\nChroma Client:\n{chroma_client}\n\n")
-        db = chroma_client.get_or_create_collection(
-            name=name, embedding_function=GeminiEmbeddingFunction())
-        print(f"\n\nDB:\n{db}\n\n")
-        initial_size = db.count()
-        for i, d in tqdm(enumerate(docs), total=len(docs), desc="D:/Competitions/KLEOS/backend/backend/parth/apps/database"):
-            db.add(
-                documents=d,
-                ids=str(i + initial_size)
-            )
-            print(f"\n\nD in Docs is:\n{d}\n\n")
-            time.sleep(0.5)
-        return db
-    except Exception as e:
-        print(f"\n\nError in create chroma db:\n{e}")
-        return e
-    
+def create_content_embeddings_db(data: str, db_name: str) -> chromadb.Collection:
+    docs = chunking(data)
+    embedding_function = sentence_transformer_ef
+    embeddings = embedding_function(docs)
+    db = create_chroma_db(docs, embeddings, db_name)
+    return db
 
+def create_chroma_db(docs, embeddings: Embeddings, name) -> chromadb.Collection:
+    class MyEmbeddingFunction(EmbeddingFunction):
+        def __call__(self, input: Documents) -> Embeddings:
+            embeddings_list = sentence_transformer_ef(input)
+            return embeddings_list
+
+    chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database")
+    db = chroma_client.get_or_create_collection(name=name, embedding_function=sentence_transformer_ef)
+
+    initial_size = db.count()
+    for i, (doc, emb) in tqdm(enumerate(zip(docs, embeddings)), total=len(docs), desc="Creating Chroma DB"):
+        db.add(documents=[doc], embeddings=[emb], ids=[str(i + initial_size)])
+        time.sleep(0.5)
+    return db
 
 async def get_chroma_db(name):
-    chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database") # Here as well 
-    return chroma_client.get_collection(name=name, function=EmbeddingFunction())
+    chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database")
+    return chroma_client.get_collection(name=name, function=MyEmbeddingFunction())
 
 async def generating_db(pdf_path):
     text = await extract_text(pdf_path)
-    docs = await chunking(text)
+    docs = chunking(text)
     print(f"\n\nDocs:\n{docs}\n\n")
-    db = await create_chroma_db(docs,'valid_data')
+    db = create_chroma_db(docs, sentence_transformer_ef(docs), 'valid_data')
     return db
 
 async def main():
@@ -94,6 +89,3 @@ async def main():
     print(op)
 
 asyncio.run(main())
-# text = extract_text(pdf_path)
-# print(text)
-

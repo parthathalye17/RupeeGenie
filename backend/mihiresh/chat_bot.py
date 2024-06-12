@@ -12,58 +12,58 @@ from tqdm import tqdm
 from google.generativeai import GenerationConfig, GenerativeModel
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from parth.apps.chunking import chunking,create_chroma_db,create_content_embeddings_db,generating_db,get_chroma_db,MyEmbeddingFunction,extract_text
 
-
-gemini_key = os.getenv("GEMINI_KEY")
+gemini_key = "AIzaSyD5detVlrgZRiQALy7k_L1_QGBHniUIXnc"
 
 genai.configure(api_key=gemini_key)
 
 
-async def extract_text(pdf_path):
-    try:
-        extracted_text = ""
-        with open(pdf_path, 'rb') as file:
-            pdf_reader = PyPDF2.PdfReader(file)
-            num_pages = len(pdf_reader.pages)
-            for page_number in range(num_pages):
-                page = pdf_reader.pages[page_number]
-                extracted_text += page.extract_text()
-        print(extracted_text)
-        return extracted_text
-    except Exception as e:
-        print(f"The exception has occured at: {e}")
-        return e
+# async def extract_text(pdf_path):
+#     try:
+#         extracted_text = ""
+#         with open(pdf_path, 'rb') as file:
+#             pdf_reader = PyPDF2.PdfReader(file)
+#             num_pages = len(pdf_reader.pages)
+#             for page_number in range(num_pages):
+#                 page = pdf_reader.pages[page_number]
+#                 extracted_text += page.extract_text()
+#         print(extracted_text)
+#         return extracted_text
+#     except Exception as e:
+#         print(f"The exception has occured at: {e}")
+#         return e
     
 
-class GeminiEmbeddingFunction(EmbeddingFunction):
-    def __call__(self, input: Documents) -> Embeddings:
-        model = 'models/embedding-001'
-        title = 'API'
-        return genai.embed_content(
-            model=model,
-            content=input,
-            task_type="retrieval_document",
-            title=title)["embedding"]
+# class GeminiEmbeddingFunction(EmbeddingFunction):
+#     def __call__(self, input: Documents) -> Embeddings:
+#         model = 'models/embedding-001'
+#         title = 'API'
+#         return genai.embed_content(
+#             model=model,
+#             content=input,
+#             task_type="retrieval_document",
+#             title=title)["embedding"]
     
 
-def create_chroma_db(docs,name):
-    chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java") #Don't forget to change path
-    db = chroma_client.get_or_create_collection(
-        name=name, embedding_function=GeminiEmbeddingFunction())
+# def create_chroma_db(docs,name):
+#     chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java") #Don't forget to change path
+#     db = chroma_client.get_or_create_collection(
+#         name=name, embedding_function=GeminiEmbeddingFunction())
     
-    initial_size = db.count()
-    for i, d in tqdm(enumerate(docs), total=len(docs), desc="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java"):
-        db.add(
-            documents=d,
-            ids=str(i + initial_size)
-        )
-        time.sleep(0.5)
-    return db
+#     initial_size = db.count()
+#     for i, d in tqdm(enumerate(docs), total=len(docs), desc="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java"):
+#         db.add(
+#             documents=d,
+#             ids=str(i + initial_size)
+#         )
+#         time.sleep(0.5)
+#     return db
 
 
-def get_chroma_db(name):
-    chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java") # Here as well 
-    return chroma_client.get_collection(name=name, function=EmbeddingFunction())
+# def get_chroma_db(name):
+#     chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java") # Here as well 
+#     return chroma_client.get_collection(name=name, function=EmbeddingFunction())
 
 
 db = create_chroma_db(docs, "sme_db")
@@ -76,7 +76,6 @@ def get_relevant_passages(query, db, n_results):
     return passages
 
 model = genai.GenerativeModel('gemini-pro')
-
 
 def extract_text_from_response(response):
     # Initialize an empty string to accumulate text
@@ -111,7 +110,7 @@ def make_prompt(ques, knowledge, chats):
     prompt = f"""question: {ques}.\n
     information base or knowledge base: {text}\n
     Answer the question strictly based from knowledge base by filtering the required information from knowledge base\n
-    Generate a sophisticated and neat answer such that it could be written in exam\n
+    Generate a sophisticated and neat answer such that it could be written in ex\n
     If the knowledge base does not have data related to the question reply with "Out of Syllabus"
     If the question is asking for a code then also explain the algorithm,\n 
     if the question is asking for career guidance then provide complete career guidance and links for various courses, \n
