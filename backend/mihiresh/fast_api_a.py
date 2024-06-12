@@ -38,23 +38,25 @@ async def sign_up_new_user(
 
         print(f"Response: {auth_response}")
 
-        if not isinstance(auth_response, dict):
-            # Extract the user ID from the response object
-            user_id = auth_response.user.id
-        else:
-            raise HTTPException(status_code=500, detail="Invalid response from Supabase")
+        # if not isinstance(auth_response, dict):
+        #     # Extract the user ID from the response object
+        #     user_id = auth_response.user.id
+        # else:
+        #     raise HTTPException(status_code=500, detail="Invalid response from Supabase")
 
+        user_id = auth_response.user.id
+        print(f"\n\nUser Id is: {user_id}\n\n")
         data = {
             "id": user_id,
             "email": email,
-            "phone": phone,
+            "phone_number": phone,
             "account_number": account_number
         }
-        print(data)
+        print(f"\n\nData: {data}\n\n")
         db_response = supabase.table('users').insert(data).execute()
-
-        if db_response.status_code != 200:
-            raise HTTPException(status_code=db_response.status_code, detail=db_response.json())
+        print(f"response: {db_response}")
+        # if db_response.status_code != 200:
+        #     raise HTTPException(status_code=db_response.status_code, detail=db_response.json())
 
         print(f"user_id is: {user_id}")
         return JSONResponse(content={"message": "User Entry Success", "user_id": user_id, "success": True}, status_code=200)        
