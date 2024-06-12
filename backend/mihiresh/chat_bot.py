@@ -35,24 +35,6 @@ async def extract_text(pdf_path):
         return e
     
 
-# text_splitter = RecursiveCharacterTextSplitter(
-#     chunk_size = 1000,    #for next time let's try to keep the chunk size little bigger
-#     chunk_overlap = 100,
-#     length_function = len,
-#     add_start_index = True
-# )
-
-# texts = text_splitter.create_documents([text])
-# print(texts[14].page_content)
-
-docs = []
-
-# for chunk in texts:
-#     docs.append(chunk.page_content)
-
-# print(docs[:2])
-
-
 class GeminiEmbeddingFunction(EmbeddingFunction):
     def __call__(self, input: Documents) -> Embeddings:
         model = 'models/embedding-001'
