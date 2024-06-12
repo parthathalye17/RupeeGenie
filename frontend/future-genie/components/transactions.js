@@ -6,7 +6,8 @@ const RecentTrans = () => {
   return (
     <View style={styles.container}>
         
-      <Text style={styles.title}>Recent transactions</Text>
+      {/* <Text style={styles.title}>Recent transactions</Text> */}
+      {/* <LinearGradient style={styles.groupChild} locations={[0,1]} colors={['#0b549d','#002244']} useAngle={true} angle={103.63} /> */}
       <View style={styles.card}>
         <Text style={styles.label}>Account Type</Text>
         <Text style={styles.accountNumber}>1234 5678 1234</Text>
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C1C2E', // dark background color
     borderRadius: 15,
     padding: 20,
+    // position: "absolute"
   },
   label: {
     color: '#FFFFFF',

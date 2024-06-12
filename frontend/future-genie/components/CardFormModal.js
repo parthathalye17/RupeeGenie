@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 
 const CardFormModal = ({ visible, onClose, onSubmit }) => {
   const [cardDetails, setCardDetails] = useState({
@@ -24,7 +24,7 @@ const CardFormModal = ({ visible, onClose, onSubmit }) => {
       animationType="slide"
       transparent={true}
       visible={visible}
-      onRequestClose={onClose}
+      // onRequestClose={!visible}
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
@@ -53,8 +53,14 @@ const CardFormModal = ({ visible, onClose, onSubmit }) => {
             value={cardDetails.holderName}
             onChangeText={(text) => setCardDetails({ ...cardDetails, holderName: text })}
           />
-          <Button title="Add Card"  onPress={handleAddCard} style={styles.but}/>
-          <Button title="Cancel" onPress={onClose} />
+          <View style={styles.buttons}>
+            <TouchableOpacity onPress={handleAddCard} style={styles.modalBtn}>
+              <Text style={styles.add_card}>Add Card</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} style={styles.modalBtnCan}>
+              <Text style={styles.add_card}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -89,6 +95,23 @@ const styles = StyleSheet.create({
   },
   but:{
     borderRadius:20,
+  },
+  buttons: {
+    flexDirection: 'row', 
+    gap: 18
+  },
+  add_card: {
+    color: '#fff',
+    marginHorizontal: 34,
+    marginVertical: 10
+  },
+  modalBtn: {
+    backgroundColor: '#003D7A',
+    borderRadius:10,
+  },
+  modalBtnCan: {
+    backgroundColor: '#B70000',
+    borderRadius:10,
   }
 });
 

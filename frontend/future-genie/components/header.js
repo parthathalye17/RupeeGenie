@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 3,
     borderBottomColor: '#ccc',
-    marginBottom:10,
+    // marginBottom:10,
   },
   logoContainer: {
     flexDirection: 'row',

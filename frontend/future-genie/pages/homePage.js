@@ -16,8 +16,8 @@ export default function Home() {
   return (
     <>
       <SafeAreaView style={styles.container}>
+        <HeaderComponent/>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <HeaderComponent/>
           <CardCarousel />
           <RecentTrans />
           <PaymentOptions />
@@ -33,6 +33,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // backgroundColor: "#fff"
   },
   scrollContainer: {
     flexGrow: 1,
