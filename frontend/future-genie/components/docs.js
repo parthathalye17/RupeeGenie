@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity , Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Invests = () => {
+const Documents = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Investments</Text>
@@ -64,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Invests;
+export default Documents;
