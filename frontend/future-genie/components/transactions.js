@@ -5,7 +5,6 @@ import LinearGradient from 'react-native-linear-gradient';
 const RecentTrans = () => {
   return (
     <View style={styles.container}>
- 
         
       <Text style={styles.title}>Recent transactions</Text>
       <View style={styles.card}>
@@ -23,9 +22,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 6,
   },
   card: {
     backgroundColor: '#1C1C2E', // dark background color
