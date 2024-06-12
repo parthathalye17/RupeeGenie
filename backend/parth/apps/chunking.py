@@ -22,7 +22,6 @@ async def extract_text(pdf_path):
             for page_number in range(num_pages):
                 page = pdf_reader.pages[page_number]
                 extracted_text += page.extract_text()
-        print(extracted_text)
         return extracted_text
     except Exception as e:
         print(f"The exception has occurred at: {e}")
