@@ -11,6 +11,7 @@ import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import PyPDF2
 import asyncio
+from chromadb.utils import embedding_functions
 
 async def extract_text(pdf_path):
     try:
@@ -46,24 +47,23 @@ genai.configure(api_key=gemini_key)
     
 class GeminiEmbeddingFunction(EmbeddingFunction):
     def __call__(self, input: Documents) -> Embeddings:
-        model = 'models/embedding-001'
+        model = "models/text-embedding-004"
         title = 'API'
         return genai.embed_content(
             model=model,
             content=input,
-            task_type="retrieval_document",
             title=title)["embedding"]
     
 
 async def create_chroma_db(docs,name):
     try:
-        chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/kleos/RupeeGenie/backend/parth/apps/database") 
+        chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database") 
         print(f"\n\nChroma Client:\n{chroma_client}\n\n")
         db = chroma_client.get_or_create_collection(
             name=name, embedding_function=GeminiEmbeddingFunction())
         print(f"\n\nDB:\n{db}\n\n")
         initial_size = db.count()
-        for i, d in tqdm(enumerate(docs), total=len(docs), desc="/Users/mihiresh/Mihiresh/Work/kleos/RupeeGenie/backend/parth/apps/database"):
+        for i, d in tqdm(enumerate(docs), total=len(docs), desc="D:/Competitions/KLEOS/backend/backend/parth/apps/database"):
             db.add(
                 documents=d,
                 ids=str(i + initial_size)
@@ -78,14 +78,14 @@ async def create_chroma_db(docs,name):
 
 
 async def get_chroma_db(name):
-    chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/kleos/RupeeGenie/backend/parth/apps/database") # Here as well 
+    chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database") # Here as well 
     return chroma_client.get_collection(name=name, function=EmbeddingFunction())
 
 async def generating_db(pdf_path):
     text = await extract_text(pdf_path)
     docs = await chunking(text)
     print(f"\n\nDocs:\n{docs}\n\n")
-    db = await create_chroma_db(docs,'Creating database.')
+    db = await create_chroma_db(docs,'valid_data')
     return db
 
 async def main():
