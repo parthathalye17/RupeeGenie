@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from supabase import create_client, Client
 import json
-from bhashini import text_to_speech, transcribe, translation
-from chat_bot import chatbot_response
+# from bhashini import text_to_speech, transcribe, translation
+# from chat_bot import chatbot_response
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_API_KEY")
@@ -38,14 +38,11 @@ async def sign_up_new_user(
 
         print(f"Response: {auth_response}")
 
-        # if not isinstance(auth_response, dict):
-        #     auth_response = auth_response.json()
-
-
-        # if auth_response.status_code != 200:
-        #     raise HTTPException(status_code=auth_response.status_code, detail=auth_response.json())
-        
-        user_id = auth_response.json()['user']['id']
+        if not isinstance(auth_response, dict):
+            # Extract the user ID from the response object
+            user_id = auth_response.user.id
+        else:
+            raise HTTPException(status_code=500, detail="Invalid response from Supabase")
 
         data = {
             "id": user_id,
@@ -85,27 +82,27 @@ async def sign_up_new_user(
 
 
 
-@app.post("/chat_text")
-async def chat_text(
-    text_input: str = Form(...),
-    language: str = Form(...),
-    user_id: str = Form(...)
-):
-    try:
-        text = text_input
-        english_text = await translation(language, "English", text)
-        eng_text = english_text['tranlated_content']
-        answer = await chatbot_response(eng_text, user_id)
-        answer_json = await translation("English", language, answer)
-        output = answer_json['translated_content']
-        if output:
-            print(f"The answer: {output}")
-            return JSONResponse(content={"message": "Got the answer", "output": output, "success": True}, status_code=200)
-        print(f"Output Content empty: {output}")
-        return JSONResponse(content={"message": "The output is empty", "success": False}, status_code=500)
-    except Exception as e:
-        print(f"The error in chat_text is: {e}")
-        return JSONResponse(content={"message": "Error Fetching Answer", "success": False}, status_code=500)
+# @app.post("/chat_text")
+# async def chat_text(
+#     text_input: str = Form(...),
+#     language: str = Form(...),
+#     user_id: str = Form(...)
+# ):
+#     try:
+#         text = text_input
+#         english_text = await translation(language, "English", text)
+#         eng_text = english_text['tranlated_content']
+#         answer = await chatbot_response(eng_text, user_id)
+#         answer_json = await translation("English", language, answer)
+#         output = answer_json['translated_content']
+#         if output:
+#             print(f"The answer: {output}")
+#             return JSONResponse(content={"message": "Got the answer", "output": output, "success": True}, status_code=200)
+#         print(f"Output Content empty: {output}")
+#         return JSONResponse(content={"message": "The output is empty", "success": False}, status_code=500)
+#     except Exception as e:
+#         print(f"The error in chat_text is: {e}")
+#         return JSONResponse(content={"message": "Error Fetching Answer", "success": False}, status_code=500)
     
 
 
