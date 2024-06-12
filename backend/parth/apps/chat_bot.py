@@ -82,7 +82,8 @@ def make_prompt(ques, knowledge):
     Act as a Cyber Security Expert and answer the question strictly based on the knowledge base by filtering the required information from the knowledge base\n
     The Knowledge Base is of Cyber Laws of India. Generate a sophisticated and neat answer making it easy for the user to understand.\n
     If the knowledge base does not have data related to the question, reply with "Sorry, the provided question is out of scope."
-    Take the user's concern seriously and provide a solution in case the user faces any cyber-related issues.
+    Take the user's concern seriously and provide a solution for the cyber issues. Make sure to provide the actual solution and not a reference for the solution. You have a knowledge base,search for an answer based on it . Check the sematics of each sentence in order to provide a logical solution.
+    Try to provide an explaination to your response.
     """
 
     gen_config = GenerationConfig(temperature=0.1)
