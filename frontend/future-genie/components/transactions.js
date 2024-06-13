@@ -9,7 +9,7 @@ const RecentTrans = () => {
       {/* <Text style={styles.title}>Recent transactions</Text> */}
       {/* <LinearGradient style={styles.groupChild} locations={[0,1]} colors={['#0b549d','#002244']} useAngle={true} angle={103.63} /> */}
       <View style={styles.card}>
-        <Text style={styles.label}>Account Type</Text>
+        <Text style={styles.label}>Account Types</Text>
         <Text style={styles.accountNumber}>1234 5678 1234</Text>
         <Text style={styles.balanceLabel}>Available Balance</Text>
         <Text style={styles.balance}>$ XXX, XXX. XX</Text>
