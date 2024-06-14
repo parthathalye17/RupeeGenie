@@ -47,7 +47,7 @@ async def sign_up_new_user(
         user_id = auth_response.user.id
         print(f"\n\nUser Id is: {user_id}\n\n")
         data = {
-            "id": user_id,
+            "auth_id": user_id,
             "email": email,
             "phone_number": phone,
             "account_number": account_number
