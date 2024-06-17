@@ -8,11 +8,23 @@ const Stack = createNativeStackNavigator();
 
 import Home from './pages/homePage';
 import RecentTransactions from './pages/recent_trans';
+import Login from './pages/login';
+import Signup from './pages/sup';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Signup">
+        <Stack.Screen
+          name="Signup"
+          component={Signup}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Home"
           component={Home}

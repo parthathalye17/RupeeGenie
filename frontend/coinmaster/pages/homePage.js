@@ -1,32 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput , Button } from 'react-native';
 import { React, useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BottomNavBar from '../components/navBar';
-import RecentTrans from '../components/transactions';
+import TransComponent from '../components/transactions';
 import PaymentOptions from '../components/pay';
 import Invests from '../components/investments';
 import HeaderComponent from '../components/header';
 import CardCarousel from '../components/carousel';
 import Documents from '../components/docs';
 
-export default function Home({ navigation }) {
+export default function Home({ route, navigation }) {
+  const { userId } = route.params;
+
   return (
     <>
-     
       <SafeAreaView style={styles.container}>
-        <HeaderComponent/>
+        <HeaderComponent userId={userId} />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <CardCarousel />
-          <RecentTrans navigation={navigation} />
+          <TransComponent navigation={navigation} />
           <PaymentOptions />
           <Invests />
           <Documents/>
         </ScrollView>
       </SafeAreaView>
-      
-
       <BottomNavBar style={styles.nav} />
     </>
   );

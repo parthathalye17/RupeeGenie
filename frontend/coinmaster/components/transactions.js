@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const RecentTrans = ({ navigation }) => {
+const TransComponent = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.label}>Account Type</Text>
+        <Text style={styles.label}>Account number</Text>
         <Text style={styles.accountNumber}>1234 5678 1234</Text>
         <Text style={styles.balanceLabel}>Available Balance</Text>
         <Text style={styles.balance}>$ XXX, XXX. XX</Text>
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecentTrans;
+export default  TransComponent;
