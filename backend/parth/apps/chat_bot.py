@@ -30,7 +30,7 @@ class GeminiEmbeddingFunction(EmbeddingFunction):
             title=title)["embedding"]
 
 def create_chroma_db(docs, name):
-    chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java") # Don't forget to change path
+    chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database") # Don't forget to change path
     db = chroma_client.get_or_create_collection(
         name=name, embedding_function=GeminiEmbeddingFunction())
     
@@ -44,7 +44,7 @@ def create_chroma_db(docs, name):
     return db
 
 def get_chroma_db(name):
-    chroma_client = chromadb.PersistentClient(path="/Users/mihiresh/Mihiresh/Work/Cheatbot/dsa-java") # Here as well 
+    chroma_client = chromadb.PersistentClient(path="D:/Competitions/KLEOS/backend/backend/parth/apps/database") # Here as well 
     return chroma_client.get_collection(name=name, function=GeminiEmbeddingFunction())
 
 def get_relevant_passages(query, db, n_results):
@@ -102,7 +102,6 @@ async def chatbot_response(ques, db, user_id):
 
 async def main(query: str):
     pdf_path = './cyber_learn.pdf'
-    # Assuming chunking.generating_db(pdf_path) creates the database only once
     db = await chunking.generating_db(pdf_path)
     passages = get_relevant_passages(query=query, db=db, n_results=5)
     str_passages = list_to_string(passages)
