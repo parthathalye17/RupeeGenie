@@ -11,13 +11,12 @@ import HeaderComponent from '../components/header';
 import CardCarousel from '../components/carousel';
 import Documents from '../components/docs';
 
-export default function Home({ route, navigation }) {
-  const { userId } = route.params;
+export default function Home({ navigation }) {
 
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <HeaderComponent userId={userId} />
+        <HeaderComponent />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <CardCarousel />
           <TransComponent navigation={navigation} />

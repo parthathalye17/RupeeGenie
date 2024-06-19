@@ -4,27 +4,29 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+
 const Stack = createNativeStackNavigator();
 
 import Home from './pages/homePage';
 import RecentTransactions from './pages/recent_trans';
-import Login from './pages/login';
-import Signup from './pages/sup';
+import OCR from './pages/OCR';
+import FormPage from './pages/FormPage';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Signup">
+      <Stack.Navigator initialRouteName="ocr">
         <Stack.Screen
-          name="Signup"
-          component={Signup}
+          name="ocr"
+          component={OCR}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login"
-          component={Login}
+          name="FormPage"
+          component={FormPage}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="Home"
           component={Home}
