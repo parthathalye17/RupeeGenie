@@ -2,6 +2,7 @@ from fastapi import FastAPI,File,UploadFile,Form, Request, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from datetime import datetime
 from supabase import create_client, Client
 import json
 # from bhashini import text_to_speech, transcribe, translation
@@ -38,14 +39,9 @@ async def sign_up_new_user(
 
         print(f"Response: {auth_response}")
 
-        # if not isinstance(auth_response, dict):
-        #     # Extract the user ID from the response object
-        #     user_id = auth_response.user.id
-        # else:
-        #     raise HTTPException(status_code=500, detail="Invalid response from Supabase")
-
         user_id = auth_response.user.id
         print(f"\n\nUser Id is: {user_id}\n\n")
+
         data = {
             "auth_id": user_id,
             "email": email,
@@ -53,11 +49,6 @@ async def sign_up_new_user(
             "account_number": account_number
         }
         print(f"\n\nData: {data}\n\n")
-        db_response = supabase.table('users').insert(data).execute()
-        print(f"response: {db_response}")
-        # if db_response.status_code != 200:
-        #     raise HTTPException(status_code=db_response.status_code, detail=db_response.json())
-
         print(f"user_id is: {user_id}")
         return JSONResponse(content={"message": "User Entry Success", "user_id": user_id, "success": True}, status_code=200)        
 
@@ -65,6 +56,119 @@ async def sign_up_new_user(
         print(f"The error in sign_up_new_user is: {e}")
         return JSONResponse(content={"message": "Error Creating New User", "success": False}, status_code=500)
     
+
+
+@app.post("/login")
+async def login_user(
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    try:
+        auth_response = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
+        user_id = auth_response.user.id
+        print(f"\n\nUser Id is: {user_id}\n\n")
+        return JSONResponse(content={"message": "Login Success", "user_id": user_id, "success": True}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": f"Error Logging In: {e}", "success": False}, status_code=500)
+
+
+
+
+@app.post("/users_b")
+async def data_entry(
+    account_number: str = Form(...),
+    password: str = Form(...),
+    email: str = Form(...),
+    phone_number: str = Form(...),
+    username: str = Form(...),
+    first_name: str = Form(...),
+    last_name: str = Form(...),
+    date_of_birth: str = Form(...),
+    address: str = Form(...),
+    city: str = Form(...),
+    state: str = Form(...),
+    country: str = Form(...),
+    zip_code: str = Form(...),
+    preferred_language: str = Form(...),
+    risk_level: str = Form(...),
+    savings_amount: float = Form(...),
+    salary: float = Form(...),
+    years_to_retirement: int = Form(...),
+    employment_status: str = Form(...),
+    marital_status: str = Form(...),
+    dependents: int = Form(...),
+    income_source: str = Form(...),
+    occupation: str = Form(...),
+    investment_preferences: str = Form(...),
+    account_status: str = Form(...),
+    debit_card_number: str = Form(...)
+):
+    try:
+
+        try:
+            auth_response = supabase.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
+            user_id = auth_response.user.id
+        except Exception as e:
+            print(f"Login Failed: {e}")
+            return JSONResponse(content={"message": "Failed while getting the auth_id itself", "success":False}, status_code=500)
+
+
+        data = {
+            "auth_id": user_id,
+            "email": email,
+            "phone_number": phone_number,
+            # "account_number": account_number,
+            "username": username,
+            "first_name": first_name,
+            "last_name": last_name,
+            # "date_of_birth": date_of_birth,
+            "address": address,
+            "city": city,
+            "state": state,
+            "country": country,
+            "zip_code": zip_code,
+            # "registration_date": datetime.utcnow(),
+            # "last_login": datetime.utcnow(),  # Assuming the user is logging in for the first time
+            "is_active": True,
+            "is_verified": False,
+            "preferred_language": preferred_language,
+            "risk_level": risk_level,
+            "savings_amount": savings_amount,
+            "salary": salary,
+            "years_to_retirement": years_to_retirement,
+            "employment_status": employment_status,
+            "marital_status": marital_status,
+            "dependents": dependents,
+            "income_source": income_source,
+            "occupation": occupation,
+            "investment_preferences": investment_preferences,
+            "account_status": account_status,
+            "debit_card_number": debit_card_number
+        }
+
+        # Insert the user data into the 'users_b' table
+        response = supabase.table("users_b").insert(data).execute()
+        user_data = {
+            "username": response['username']
+        }
+        print(f"\n\nResponse is:\n{response}\n\n")
+        # print(f"\n\nResponse is:\n{response}\n\n")
+
+
+        return JSONResponse(content={"message": "Added in Database at users_b table", "data": user_data, "success": True}, status_code=200)
+
+    except Exception as e:
+        print(f"\n\nError in data_entry is:\n{e}\n\n")
+        return JSONResponse(content={"message": "Did not work adding", "success": False}, status_code=500)
+
+
+
 
 
 
