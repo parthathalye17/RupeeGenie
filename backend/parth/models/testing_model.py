@@ -3,11 +3,11 @@ import pandas as pd
 import joblib
 
 new_entry = {
-    "amount": 300,
-    "transaction_hour": 20,
+    "amount": 30000,
+    "transaction_hour": 2,
     "transaction_day_of_week": 3,
     "avg_transaction_amount": 521,
-    "city_consistency": 0.9,
+    "city_consistency": 0.4,
     "country_consistency": 1,
     "average_transaction_frequency": 1,
     "transaction_type": 1,

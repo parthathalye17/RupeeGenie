@@ -29,13 +29,13 @@ async def extract_text(pdf_path):
 
 def chunking(data):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=5000,
+        chunk_size=1000,
         chunk_overlap=100,
         length_function=len,
         add_start_index=True
     )
     texts = text_splitter.create_documents([data])
-    docs = [content.page_content for content in texts]  # Extracting only the page content
+    docs = [content.page_content for content in texts]  
     return docs
 
 gemini_key = "AIzaSyD5detVlrgZRiQALy7k_L1_QGBHniUIXnc"

@@ -51,7 +51,7 @@ def get_relevant_passages(query, db, n_results):
     passages = db.query(query_texts=[query], n_results=n_results)['documents'][0]
     return passages
 
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-latest-pro')
 
 def extract_text_from_response(response):
     extracted_text = ""
@@ -75,15 +75,15 @@ def list_to_string(passages):
     return content
 
 def make_prompt(ques, knowledge):
-    text = knowledge.replace("'", "").replace('"', '')  # even i dont know why i did this
+    text = knowledge.replace("'", "").replace('"', '')  
 
     prompt = f"""question: {ques}.\n
-    information base or knowledge base: {text}\n
+    Information base or knowledge base: {text}\n
     Act as a Cyber Security Expert and answer the question strictly based on the knowledge base by filtering the required information from the knowledge base\n
     The Knowledge Base is of Cyber Laws of India. Generate a sophisticated and neat answer making it easy for the user to understand.\n
-    If the knowledge base does not have data related to the question, reply with "Sorry, the provided question is out of scope."
-    Take the user's concern seriously and provide a solution for the cyber issues. Make sure to provide the actual solution and not a reference for the solution. You have a knowledge base,search for an answer based on it . Check the sematics of each sentence in order to provide a logical solution.
-    Try to provide an explaination to your response.
+    Take the user's concern seriously and provide a solution for the cyber issues. Make sure to provide the actual solution and not a reference for the solution. You have a knowledge base,search for an answer based on it.
+    It is highly possible that the question could be a problem in a real life scenario, make sure to give a logical solution to finance related problem.
+    Try to provide an explaination to your response.If the knowledge base does not have data related to the question, reply with "Sorry, the provided question is out of scope."
     """
 
     gen_config = GenerationConfig(temperature=0.1)
@@ -92,7 +92,7 @@ def make_prompt(ques, knowledge):
     return answer
 
 async def chatbot_response(ques, db, user_id):
-    passages = get_relevant_passages(ques, db, n_results=25)  # i have kept the n_results more because i wanted more info to be included in my answer
+    passages = get_relevant_passages(ques, db, n_results=25)  
     txt = ""
     for passage in passages:
         txt += passage
