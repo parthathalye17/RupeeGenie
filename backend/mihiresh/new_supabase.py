@@ -1,9 +1,13 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI,File,UploadFile,Form, Request, HTTPException, Body
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from supabase import create_client, Client
 import uuid
 import uvicorn
+import random
+import string
+from datetime import date, datetime
 
 app = FastAPI()
 
@@ -78,6 +82,24 @@ class TransactionRequest(BaseModel):
     sender_account_id: str
     receiver_account_id: str
 
+
+
+class UserBRequest(BaseModel):
+    phone_number: str
+    first_name: str
+    last_name: str
+    date_of_birth: date
+    address: str
+    city: str
+    state: str
+    country: str
+    zip_code: str
+    registration_date: date
+    language: str
+    balance: float
+    salary: float
+    occupation: str
+
 @app.post("/signup/")
 async def sign_up(sign_up_request: SignUpRequest):
     auth_response = supabase.auth.sign_up({
@@ -100,27 +122,134 @@ async def sign_up(sign_up_request: SignUpRequest):
 
     return {"message": "User signed up successfully", "auth_id": auth_id}
 
-@app.post("/add_account/")
-async def add_account(auth_id: str, account_request: AccountRequest):
-    user_response = supabase.from_('users_b').select('*').eq('auth_id', auth_id).execute()
-    
-    if len(user_response['data']) == 0:
-        raise HTTPException(status_code=404, detail="User not found")
 
-    account_data = account_request.dict()
-    account_data['account_id'] = str(uuid.uuid4())
-    
-    account_response = supabase.from_('bank_accounts').insert(account_data).execute()
-    
-    if 'error' in account_response:
-        raise HTTPException(status_code=400, detail=account_response['error'])
 
-    user_data = user_response['data'][0]
-    user_data['account_id'] = account_data['account_id']
-    
-    supabase.from_('users_b').update(user_data).eq('auth_id', auth_id).execute()
 
-    return {"message": "Account added successfully", "account_id": account_data['account_id']}
+def generate_varchar_id(length=12):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+
+@app.post("/add_users_b")
+async def add_users(
+    email: str = Form(...),
+    password: str = Form(...),
+    phone_number: str = Form(...),
+    first_name: str = Form(...),
+    last_name: str = Form(...),
+    date_of_birth: str = Form(...),
+    address: str = Form(...),
+    city: str = Form(...),
+    state: str = Form(...),
+    country: str = Form(...),
+    zip_code: str = Form(...),
+    registration_date: str = Form(...),
+    language: str = Form(...),
+    balance: float = Form(...),
+    salary: float = Form(...),
+    occupation: str = Form(...)
+):
+    try:
+        
+        data = {
+            "email": email,
+            "password": password
+        }
+        response = supabase.auth.sign_in_with_password(data)
+        auth_id = response.user.id
+        print(f"User_id: {auth_id}\n")
+        account_id = generate_varchar_id()
+        upi_id = generate_varchar_id()
+        print(f"\nAccount: {account_id}\n\nUpi: {upi_id}\n\n")
+        date_of_birth = datetime.strptime(date_of_birth, "%d/%m/%Y").strftime("%Y-%m-%d")
+        registration_date = datetime.strptime(registration_date, "%d/%m/%Y").strftime("%Y-%m-%d")
+
+        user_b_data = {
+            "auth_id": auth_id,
+            "phone_number": phone_number,
+            "first_name": first_name,
+            "last_name": last_name,
+            "date_of_birth": date_of_birth,
+            "address": address,
+            "city": city,
+            "state": state,
+            "country": country,
+            "zip_code": zip_code,
+            "registration_date": registration_date,
+            "language": language,
+            "balance": balance,
+            "salary": salary,
+            "occupation": occupation,
+            "account_id": account_id,
+            "upi_id": upi_id,
+            "email": email
+        }
+
+        response = supabase.table('users_b').insert(user_b_data).execute()
+        return JSONResponse(content={"message": "Done", "success": True}, status_code=200)
+
+    except Exception as e:
+        print(f"Error is:\n\n{e}\n")
+        return JSONResponse(content={"message": "failure"}, status_code=500)
+
+
+
+@app.post("/add_account")
+async def add_account(
+    email: str = Form(...),
+    password: str = Form(...),
+    account_type: str = Form(...),
+    balance: float = Form(...),
+    created_at: str = Form(...),
+    status: str = Form(...),
+    branch_name: str = Form(...),
+    ifsc_code: str = Form(...),
+    interest_rate: float = Form(...),
+    overdraft_limit: float = Form(...)
+):
+    try:
+        try:
+            data = {
+                "email": email,
+                "password": password
+            }
+            response = supabase.auth.sign_in_with_password(data)
+            auth_id = response.user.id
+        except Exception as e:
+            print(f"\nError:\n\n{e}")
+            return JSONResponse(content={"message": "failure while getting auth_id"}, status_code=500)
+
+        # user_response = supabase.from_('users_b').select('*').eq('auth_id', auth_id).execute()
+        try:
+            user_response = supabase.from_('users_b').select('account_id').eq('auth_id', auth_id).execute()
+            account_id = user_response.data[0]['account_id']
+            print(f"Account id is: {account_id}")
+        except Exception as e:
+            print(f"\nError:\n\n{e}")
+            return JSONResponse(content={"message": "failure while getting account_id"}, status_code=500)
+
+        created_at = datetime.strptime(created_at, "%d/%m/%Y").strftime("%Y-%m-%d")
+        
+        account_data = {
+            "account_id": account_id,
+            "account_type": account_type,
+            "balance": balance,
+            "created_at": created_at,
+            "status": status,
+            "branch_name": branch_name,
+            "ifsc_code": ifsc_code,
+            "interest_rate": interest_rate,
+            "overdraft_limit": overdraft_limit
+        }
+
+        account_response = supabase.from_('bank_accounts').insert(account_data).execute()
+
+        return JSONResponse(content={"message": "Done", "account_id": account_id, "success": True}, status_code=200)
+    
+    except Exception as e:
+        print(f"\nError:\n\n{e}")
+        return JSONResponse(content={"message": "failure"}, status_code=500)
+    
+    
 
 @app.post("/add_upi/")
 async def add_upi(auth_id: str, upi_request: UPIRequest):
