@@ -11,6 +11,8 @@ import Home from './pages/homePage';
 import RecentTransactions from './pages/recent_trans';
 import OCR from './pages/OCR';
 import FormPage from './pages/FormPage';
+import ChatScreen from './pages/ChatScreen';
+import QRScannerComponent from './pages/QrScanner';
 
 export default function App() {
   return (
@@ -19,6 +21,16 @@ export default function App() {
         <Stack.Screen
           name="ocr"
           component={OCR}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="qrscan"
+          component={QRScannerComponent}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Chatbot"
+          component={ChatScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

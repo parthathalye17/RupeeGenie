@@ -17,10 +17,10 @@ const BottomNavBar = () => {
       <TouchableOpacity style={styles.iconContainer} onPress={() => console.log('home')}>
         <Icon name="home-outline" size={24} color="#fff" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.iconContainer} onPress={() => console.log('Chat pressed')}>
+      <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Chatbot')}>
         <Icon name="chatbubble-outline" size={24} color="#fff" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.iconContainer} onPress={() => console.log('QR pressed')}>
+      <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('qrscan')}>
         <Icon name="qr-code-outline" size={24} color="#fff" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.iconContainer} onPress={() => console.log('Card pressed')}>
